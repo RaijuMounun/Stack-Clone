@@ -11,10 +11,10 @@ public class CameraController : MonoBehaviour
         StopAllCoroutines();
         Vector3 target = transform.position;
         target.y += upValue;
-        StartCoroutine(Move(transform, target, time, curve));
+        StartCoroutine(MoveCamera(transform, target, time, curve));
     }
 
-    private IEnumerator Move(Transform current, Vector3 target, float time, AnimationCurve curve)
+    private IEnumerator MoveCamera(Transform current, Vector3 target, float time, AnimationCurve curve)
     {
         float passed = 0f;
         Vector3 init = current.position;

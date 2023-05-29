@@ -12,15 +12,14 @@ public class ColorController : MonoBehaviour
 
     private void Start()
     {
-
         _listColor = new List<Color>();
 
-        var pool = new List<Color>(colorData.colors);
-        var length = pool.Count;
+        List<Color> pool = new List<Color>(colorData.colors);
+        int length = pool.Count;
         for (int i = 0; i < length; i++)
         {
-            var index = Random.Range(0, pool.Count);
-            var currentColor = pool[index];
+            int index = Random.Range(0, pool.Count);
+            Color currentColor = pool[index];
             pool.RemoveAt(index);
             _listColor.Add(currentColor);
         }
@@ -31,23 +30,25 @@ public class ColorController : MonoBehaviour
 
     private void SetColor()
     {
-        var baseColor = _listColor[Random.Range(1, _listColor.Count)];
-        var target = _listColor[0];
+        Color baseColor = _listColor[Random.Range(1, _listColor.Count)];
+        Color target = _listColor[0];
+
         for (int i = 0; i < pivots.Count; i++)
         {
-            var normalized = (float)(i + 1) / pivots.Count;
+            float normalized = (float)(i + 1) / pivots.Count;
             pivots[i].material.color = Color.Lerp(target, baseColor, normalized);
         }
     }
 
     public Color GetColor(int score)
     {
-        var index = score / colorData.scoreLimit;
+        int index = score / colorData.scoreLimit;
 
-        var baseColor = _listColor[index];
-        var targetColor = _listColor[index + 1];
+        Color baseColor = _listColor[index];
+        Color targetColor = _listColor[index + 1];
 
-        var currentScore = score % colorData.scoreLimit;
+        int currentScore = score % colorData.scoreLimit;
+
         return Color.Lerp(baseColor, targetColor, (float)currentScore / colorData.scoreLimit);
     }
 }

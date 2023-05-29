@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,11 +5,7 @@ using UnityEngine;
 public class ColorData : ScriptableObject
 {
     public List<Color> colors;
-
     public int scoreLimit;
-
-
-
 }
 
 

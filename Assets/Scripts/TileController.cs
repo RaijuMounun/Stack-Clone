@@ -55,26 +55,25 @@ public class TileController : MonoBehaviour
         if (_isAxisX) position.x += move;
         else position.z += move;
 
+        LimitnChange(position);
 
-        //Limit movement and change direction
-        if (_isAxisX)
-        {
-            if (position.x < -limit || position.x > limit)
-            {
-                position.x = Mathf.Clamp(position.x, -limit, limit);
-                _isForward = !_isForward;
-            }
-        }
-        else
-        {
-            if (position.z < -limit || position.z > limit)
-            {
-                position.z = Mathf.Clamp(position.z, -limit, limit);
-                _isForward = !_isForward;
-            }
-        }
 
         transform.position = position;
+    }
+
+    void LimitnChange(Vector3 pos)
+    {//Limit movement and change direction
+        if (_isAxisX)
+        {
+            if (!(pos.x < -limit || pos.x > limit)) return; //I dont like nesting
+
+            pos.x = Mathf.Clamp(pos.x, -limit, limit);
+            _isForward = !_isForward;
+            return;
+        }  //else
+        if (!(pos.z < -limit || pos.z > limit)) return; //I dont like nesting
+        pos.z = Mathf.Clamp(pos.z, -limit, limit);
+        _isForward = !_isForward;
     }
 
     void SplitObject(bool isAxisX, float value)
@@ -87,17 +86,13 @@ public class TileController : MonoBehaviour
 
         //size
         Vector3 fallingSize = reference.localScale;
-        if (isAxisX)
-            fallingSize.x = Mathf.Abs(value);
-        else
-            fallingSize.z = Mathf.Abs(value);
+        if (isAxisX) fallingSize.x = Mathf.Abs(value);
+        else fallingSize.z = Mathf.Abs(value);
         falling.localScale = fallingSize;
 
         Vector3 standSize = reference.localScale;
-        if (isAxisX)
-            standSize.x = reference.localScale.x - Mathf.Abs(value);
-        else
-            standSize.z = reference.localScale.z - Mathf.Abs(value);
+        if (isAxisX) standSize.x = reference.localScale.x - Mathf.Abs(value);
+        else standSize.z = reference.localScale.z - Mathf.Abs(value);
         stand.localScale = standSize;
 
         Direction minDirection = isAxisX ? Direction.Left : Direction.Back;
@@ -105,18 +100,14 @@ public class TileController : MonoBehaviour
 
         //position
         Vector3 fallingPosition = GetEdgePosition(referenceMesh, isFallingFirst ? minDirection : maxDirection);
-        if (isAxisX)
-            fallingPosition.x += (fallingSize.x / 2) * (isFallingFirst ? 1 : -1);
-        else
-            fallingPosition.z += (fallingSize.z / 2) * (isFallingFirst ? 1 : -1);
+        if (isAxisX) fallingPosition.x += (fallingSize.x / 2) * (isFallingFirst ? 1 : -1);
+        else fallingPosition.z += (fallingSize.z / 2) * (isFallingFirst ? 1 : -1);
         falling.position = fallingPosition;
 
 
         Vector3 standPosition = GetEdgePosition(referenceMesh, !isFallingFirst ? minDirection : maxDirection);
-        if (isAxisX)
-            standPosition.x += (standSize.x / 2) * (!isFallingFirst ? 1 : -1);
-        else
-            standPosition.z += (standSize.z / 2) * (!isFallingFirst ? 1 : -1);
+        if (isAxisX) standPosition.x += (standSize.x / 2) * (!isFallingFirst ? 1 : -1);
+        else standPosition.z += (standSize.z / 2) * (!isFallingFirst ? 1 : -1);
         stand.position = standPosition;
 
         //Color
@@ -148,10 +139,9 @@ public class TileController : MonoBehaviour
                 position.z -= extents.z;
                 break;
         }
+
         return position;
     }
-
-
 
     public void OnClick()
     {
@@ -167,22 +157,27 @@ public class TileController : MonoBehaviour
 
         SplitObject(_isAxisX, _isAxisX ? distance.x : distance.z);
 
-        //reset
-        _isAxisX = !_isAxisX;
-
-        Vector3 newPosition = last.position;
-        newPosition.y += transform.localScale.y;
-        if (!_isAxisX) newPosition.z = limit;
-        else newPosition.x = limit;
-        transform.position = newPosition;
-
-        transform.localScale = last.localScale;
-
-        _isStop = false;
+        SetNewTile();
 
         UpdateScore();
 
         cameraController.Up();
+    }
+
+    void SetNewTile()
+    {
+        _isAxisX = !_isAxisX;
+
+        Vector3 newPosition = last.position;
+        newPosition.y += transform.localScale.y;
+
+        if (_isAxisX) newPosition.x = limit;
+        else newPosition.z = limit;
+
+        transform.position = newPosition;
+
+        transform.localScale = last.localScale;
+        _isStop = false;
     }
 
     bool isFail(Vector3 dist)
