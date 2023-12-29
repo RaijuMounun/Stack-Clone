@@ -40,9 +40,6 @@ public class TileController : MonoBehaviour
         scoreText.text = _score.ToString();
     }
 
-
-
-
     private void LateUpdate()
     {
         if (_isStop) return;
@@ -55,13 +52,12 @@ public class TileController : MonoBehaviour
         if (_isAxisX) position.x += move;
         else position.z += move;
 
-        LimitnChange(position);
-
+        LimitNChange(position);
 
         transform.position = position;
     }
 
-    void LimitnChange(Vector3 pos)
+    void LimitNChange(Vector3 pos)
     {//Limit movement and change direction
         if (_isAxisX)
         {
@@ -82,7 +78,6 @@ public class TileController : MonoBehaviour
 
         Transform falling = Instantiate(fallingPrefab).transform;
         Transform stand = Instantiate(standPrefab).transform;
-
 
         //size
         Vector3 fallingSize = reference.localScale;
@@ -146,7 +141,6 @@ public class TileController : MonoBehaviour
     public void OnClick()
     {
         _isStop = true;
-
         Vector3 distance = last.position - transform.position;
 
         if (isFail(distance))
@@ -156,11 +150,8 @@ public class TileController : MonoBehaviour
         }
 
         SplitObject(_isAxisX, _isAxisX ? distance.x : distance.z);
-
         SetNewTile();
-
         UpdateScore();
-
         cameraController.Up();
     }
 
